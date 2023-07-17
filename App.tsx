@@ -1,11 +1,8 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
+ * Home screen for app
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -21,16 +18,19 @@ import {
 } from 'react-native';
 
 import {
-  Colors,
+  Colors, // change when design team has color scheme
 } from 'react-native/Libraries/NewAppScreen';
+
+import axios from 'axios';
 
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
+// Section is currently for each note
 function Section({children, title}: SectionProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-  const createTwoButtonAlert = () =>
+  const createTwoButtonAlert = () => // temporary function
     Alert.alert('TODO', 'Add react native navigation functionality', [
       {
         text: 'Cancel',
@@ -42,7 +42,7 @@ function Section({children, title}: SectionProps): JSX.Element {
   
   return (
     <View style={styles.sectionContainer}>
-      <Pressable onPress={ createTwoButtonAlert }>
+      <Pressable onPress={ createTwoButtonAlert /* make function direct page to a note later */ }>
         <Text
           style={[
             styles.sectionTitle,
@@ -55,7 +55,7 @@ function Section({children, title}: SectionProps): JSX.Element {
       </Pressable>
       <Text
         style={[
-          styles.sectionDescription,
+          styles.sectionDescription, 
           {
             color: isDarkMode ? Colors.light : Colors.dark,
           },
@@ -74,6 +74,20 @@ function App(): JSX.Element {
   };
 
   const imageSource = isDarkMode ? require('./WB-header-dark.png') : require('./WB-header.png');
+
+  // fetching from backend, should fetch "Hello from the backend API"
+  const [data, setData] = useState("");
+  useEffect(() => {
+    fetchData();
+  },[]);
+  const fetchData=async()=>{
+    try {
+      const response = await axios.get('http://localhost:5000/');
+      setData(response.data.message);
+    } catch(error) {
+      console.log(error);
+    }
+  };
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -95,6 +109,10 @@ function App(): JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
+            {/* temporary hardcoded notes */}
+          <Section title="">
+            <Text>Fetched: {data}.</Text>
+          </Section>
           <Section title="Note One">
             [Preview of note...]
           </Section>
